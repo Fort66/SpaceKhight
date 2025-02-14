@@ -29,6 +29,7 @@ class Game:
         self.win_width = screen.window.get_width()
         self.win_height = screen.window.get_height()
         self.check_events = CheckEvents(self)
+        self.dt = 0
         self.create_groups()
         self.setup()
 
@@ -74,6 +75,7 @@ class Game:
             #     ic('emeny shot')
             # if pg.sprite.groupcollide(self.enemies_group, self.player_shot_group, False, False):
             #     ic('player shot')
-            # self.screen.update_caption(f'{str(round(self.clock.get_fps(), 2))}')
-            # pg.display.update()
-            self.clock.tick(self.fps)
+            self.screen.update_caption(f'{str(round(self.clock.get_fps(), 2))}')
+            pg.display.update()
+            # self.dt = self.clock.tick(self.fps)/1000.0
+            self.dt = self.clock.tick(self.fps) / 1000

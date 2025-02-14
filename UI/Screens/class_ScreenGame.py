@@ -34,6 +34,6 @@ class ScreenGame:
             self.icon = set_icon(load(self.icon))
 
         self.rect = self.window.get_rect()
-        
+
     def update_caption(self, caption: str):
         self.caption = set_caption(caption)

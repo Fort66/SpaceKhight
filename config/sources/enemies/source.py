@@ -11,23 +11,23 @@ ENEMIES = {
                 {'angle':{
                             0: {
                                 'sprite': scale_by(load('images/Ships/Spaceship16/ship1.png').convert_alpha(), SCALE_VALUE[1]),
-                                'weapons': [[0, 0]]
+                                'weapons': [[60, 5], [60, -10]]
                                 },
                             22: {
                                 'sprite': scale_by(load('images/Ships/Spaceship16/ship2.png').convert_alpha(), SCALE_VALUE[1]),
-                                'weapons': [[0, 0]]
+                                'weapons': [[6, 0], [60, -20]]
                                 },
                             45: {
                                 'sprite': scale_by(load('images/Ships/Spaceship16/ship3.png').convert_alpha(), SCALE_VALUE[1]),
-                                'weapons': [[0, 0]]
+                                'weapons': [[60, 5], [60, -25]]
                                 },
                             67: {
                                 'sprite': scale_by(load('images/Ships/Spaceship16/ship4.png').convert_alpha(), SCALE_VALUE[1]),
-                                'weapons': [[0, 0]]
+                                'weapons': [[60, 10], [60, -25]]
                                 },
                             90: {
                                 'sprite': scale_by(load('images/Ships/Spaceship16/ship5.png').convert_alpha(), SCALE_VALUE[1]),
-                                'weapons': [[0, 0]]
+                                'weapons': [[60, 20], [60, -20]]
                                 },
                             112: {
                                 'sprite': flip(scale_by(load('images/Ships/Spaceship16/ship4.png').convert_alpha(), SCALE_VALUE[1]), False, True),

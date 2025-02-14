@@ -45,7 +45,6 @@ class Shots(Sprite):
         self.pos = Vector2(pos) + self.offset
         self.direction = Vector2(1, 0).rotate(-self.angle)
         self.speed = speed
-        self.shield = None
         # self.group.add(self)
         # self
 

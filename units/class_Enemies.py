@@ -34,7 +34,7 @@ class Enemies(Sprite):
         self.is_min_distance = False
         self.min_distance = 300
         self.shot_distance = 1500
-        
+
         self.__post_init__()
         self.random_value()
         self.change_direction()
@@ -44,23 +44,40 @@ class Enemies(Sprite):
     def __post_init__(self):
         self.image = ENEMIES[1]['angle'][0]['sprite']
         self.image_rotation = self.image.copy()
+        self.rect = self.image_rotation.get_rect()
 
         self.pos = (
-                    uniform(self.group.background_rect.left + 200,
-                            self.group.background_rect.right - 200),
-                    uniform(self.group.background_rect.top + 200,
-                            self.group.background_rect.bottom - 200)
+                    uniform(self.group.background_rect.left + self.rect.width,
+                            self.group.background_rect.right - self.rect.width),
+                    uniform(self.group.background_rect.top + self.rect.height,
+                            self.group.background_rect.bottom - self.rect.height),
         )
+        self.rect.center = self.pos
 
-        self.rect = self.image_rotation.get_rect(center=self.pos)
         self.direction = Vector2(self.pos)
 
         self.shield = Guardian(
                                 dir_path='images/Guards/guard2',
                                 speed_frame=.09,
                                 obj_rect=self.rect,
-                                angle=self.angle,
                                 )
+
+        self.prepare_weapon(0)
+
+
+    def prepare_weapon(self, angle):
+        self.pos_weapons = []
+        for value in ENEMIES[1]['angle'][angle]['weapons']:
+            self.pos_weapons.append(value)
+            
+            
+    @property
+    def pos_weapons_rotation(self):
+        result = []
+        for value in self.pos_weapons:
+            newX, newY = self.vector_rotation(value, -self.angle / 180 * math.pi)
+            result.append([self.rect.centerx + newX, self.rect.centery + newY])
+        return result
 
 
     def random_value(self):
@@ -69,8 +86,7 @@ class Enemies(Sprite):
         self.direction_list = [0, 1, -1]
 
 
-
-    def rotate_vector(self, vector, angle):
+    def vector_rotation(self, vector, angle):
         vector = Vector2(vector)
         return vector.rotate_rad(angle)
 
@@ -88,6 +104,7 @@ class Enemies(Sprite):
         for value in ENEMIES[1]['angle']:
             if self.angle <= value:
                 self.image = ENEMIES[1]['angle'][value]['sprite']
+                self.prepare_weapon(value)
                 break
 
         self.image_rotation = self.image
@@ -137,21 +154,22 @@ class Enemies(Sprite):
     def shot(self):
         if Vector2(self.rect.center).distance_to(self.player.rect.center) <= self.shot_distance:
             if self.player.first_shot and randint(0, 100) == 50:
-                self.group.add(shot :=
-                            Shots(
-                                pos=self.rect.center,
-                                screen=screen,
-                                group=self.group,
-                                angle=self.angle,
-                                speed=10,
-                                kill_shot_distance=2000,
-                                shoter=self,
-                                color=None,
-                                image='images/Shots/shot1.png',
-                                scale_value=.08,
+                for value in self.pos_weapons_rotation:
+                    self.group.add(shot :=
+                                Shots(
+                                    pos=(value),
+                                    screen=screen,
+                                    group=self.group,
+                                    angle=self.angle,
+                                    speed=10,
+                                    kill_shot_distance=2000,
+                                    shoter=self,
+                                    color=None,
+                                    image='images/Shots/shot1.png',
+                                    scale_value=.08,
+                                    )
                                 )
-                            )
-                self.shot_group.add(shot)
+                    self.shot_group.add(shot)
 
         
     def update(self):
@@ -160,7 +178,11 @@ class Enemies(Sprite):
         self.check_move_count()
         self.move()
         self.shot()
-        self.shield.animate(self.rect, self.angle)
+        self.shield.animate(self.rect)
+        
+        for value in self.pos_weapons_rotation:
+            value[0] += self.direction.x
+            value[1] += self.direction.y
 
 
 

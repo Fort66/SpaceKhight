@@ -13,8 +13,6 @@ from units.class_Shots import Shots
 from units.class_Guardian import Guardian
 from config.create_Objects import screen
 
-from logic.class_FirstShot import FirstShot
-
 
 
 class Player(Sprite):
@@ -34,7 +32,7 @@ class Player(Sprite):
         self.rotation_speed = 10
         self.speed = 7
         self.shot_group = shot_group
-        self.first_shot = FirstShot()
+        self.first_shot = False
         self.__post_init__()
         self.group.add(self)
 
@@ -47,7 +45,6 @@ class Player(Sprite):
                                 dir_path='images/Guards/guard1',
                                 speed_frame=.09,
                                 obj_rect=self.rect,
-                                angle=self.angle
                                 )
 
         self.prepare_weapon(0)
@@ -146,11 +143,14 @@ class Player(Sprite):
     def update(self):
         self.check_position()
         self.move()
-        self.shield.animate(self.rect, self.angle)
+        self.shield.animate(self.rect)
 
         for value in self.pos_weapons_rotation:
             value[0] += self.direction.x
             value[1] += self.direction.y
+
+
+
 
 
 
