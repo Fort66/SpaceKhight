@@ -4,8 +4,10 @@ executing==2.2.0
 gif_pygame==1.1.2
 icecream==2.1.4
 loguru==0.7.3
+memory-profiler==0.61.0
 numpy==2.2.2
 pillow==11.1.0
+psutil==7.0.0
 pygame==2.6.1
 pygame-ce==2.5.2
 Pygments==2.19.1
