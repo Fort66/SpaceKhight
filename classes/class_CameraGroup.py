@@ -35,12 +35,9 @@ class CameraGroup(Group):
 
     def set_background(self):
         self.source = back
-        # self.gifBackgtound = gif_pygame.load('Images/Back/gif/2.gif')
-        # self.gifRect = self.gifBackgtound.get_rect()
         self.background_surface = load(self.source).convert_alpha()
-        # self.backgroundRect = self.backgroundSurface.get_rect(center = self.half)
         self.background_rect = self.background_surface.get_rect()
-        # ic(self.backgroundRect)
+
 
 
     def camera_center(
@@ -65,5 +62,5 @@ class CameraGroup(Group):
 
             if hasattr(sprite, 'shield') and sprite.shield:
                 self.display_surface.blit(sprite.shield.frames[sprite.shield.frame][0], offset_position)
-        
+
         self.game.mini_map.update()
