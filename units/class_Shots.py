@@ -6,12 +6,12 @@ from pygame.image import load
 
 from icecream import ic
 
+from classes.class_SpriteGroups import SpriteGroups
 
 class Shots(Sprite):
     def __init__(
                 self,
                 pos=(0, 0),
-                group=None,
                 screen=None,
                 size=(10, 2),
                 color='white',
@@ -23,7 +23,9 @@ class Shots(Sprite):
                 scale_value=None,
                 damage=None
                 ):
-        super().__init__(group)
+
+        self.sprite_groups = SpriteGroups()
+        super().__init__(self.sprite_groups.camera_group)
 
         self.screen = screen
         self.angle = angle

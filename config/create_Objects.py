@@ -12,4 +12,3 @@ screen = ScreenGame(
                     )
 
 
-sprite_groups = SpriteGroups()

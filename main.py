@@ -3,7 +3,7 @@ from sys import exit
 
 from loguru import logger
 
-# import cProfile
+# import cProfiless
 
 
 # from memory_profiler import profile
@@ -33,8 +33,7 @@ def main():
     game.run_game()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
     pg.quit()
     exit()
-

@@ -2,16 +2,11 @@ import pygame as pg
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE, VIDEORESIZE
 
 
-
 class CheckEvents:
-    def __init__(
-                self,
-                game = None
-                ):
+    def __init__(self, game=None):
 
         self.game = game
         self.angle = 0
-
 
     def check_events(self):
 
@@ -23,6 +18,3 @@ class CheckEvents:
 
             if event.type == VIDEORESIZE:
                 self.game.screen.rect = self.game.screen.window.get_rect()
-
-
-

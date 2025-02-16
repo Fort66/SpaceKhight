@@ -8,14 +8,15 @@ from dataclasses import dataclass
 
 pg.init()
 
+
 @dataclass
 class ScreenGame:
     size: tuple = (0, 0)
-    color: str | tuple[int, int, int] = 'SteelBlue'
-    caption: str = 'Game'
-    icon: str = ''
-    is_resizable: bool = False # изменяемый размер окна
-    is_full_screen: bool = False # полноэкранный режим
+    color: str | tuple = "SteelBlue"
+    caption: str = "Game"
+    icon: str = ""
+    is_resizable: bool = False  # изменяемый размер окна
+    is_full_screen: bool = False  # полноэкранный режим
 
     def __post_init__(self):
         if self.is_resizable:
@@ -36,8 +37,5 @@ class ScreenGame:
 
         self.rect = self.window.get_rect()
 
-
     def update_caption(self, caption: str):
         self.caption = set_caption(caption)
-
-

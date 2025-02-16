@@ -13,91 +13,76 @@ from config.create_Objects import screen
 
 from units.class_Shots import Shots
 from units.class_Guardian import Guardian
+from classes.class_SpriteGroups import SpriteGroups
 
 
 class Enemies(Sprite):
     def __init__(
-                self,
-                group_list=None,
-                player=None,
-                ):
-        super().__init__(group_list[0])
+        self,
+        player=None,
+    ):
 
-        self.group_list = group_list
+        self.sprite_groups = SpriteGroups()
+        super().__init__(self.sprite_groups.camera_group)
+        self.sprite_groups.enemies_group.add(self)  # add in enemies group
+
         self.player = player
         self.angle = 0
         self.min_distance = 300
         self.shot_distance = 1500
+
         self.shots = False
         self.is_min_distance = False
 
         self.__post_init__()
         self.random_value()
         self.change_direction()
-        self.group_list[1].add(self) # add in enemies group
-
 
     def __post_init__(self):
-        self.image = ENEMIES[1]['angle'][0]['sprite']
+        self.image = ENEMIES[1]["angle"][0]["sprite"]
         self.image_rotation = self.image.copy()
         self.rect = self.image_rotation.get_rect()
 
         self.pos = (
-                    uniform(
-                            self.group_list[0].background_rect.left + self.rect.width,
-                            self.group_list[0].background_rect.right - self.rect.width
-                            ),
-                    uniform(
-                            self.group_list[0].background_rect.top + self.rect.height,
-                            self.group_list[0].background_rect.bottom - self.rect.height
-                            ),
-                    )
+            uniform(
+                self.sprite_groups.camera_group.background_rect.left + self.rect.width,
+                self.sprite_groups.camera_group.background_rect.right - self.rect.width,
+            ),
+            uniform(
+                self.sprite_groups.camera_group.background_rect.top + self.rect.height,
+                self.sprite_groups.camera_group.background_rect.bottom
+                - self.rect.height,
+            ),
+        )
 
         self.rect.center = self.pos
         self.direction = Vector2(self.pos)
 
         self.shield = Guardian(
-                                dir_path='images/Guards/guard2',
-                                speed_frame=.09,
-                                obj_rect=self.rect,
-                                group=self.group_list[3]
-                                )
+            dir_path="images/Guards/guard2",
+            speed_frame=0.09,
+            obj_rect=self.rect,
+            group=self.sprite_groups.enemies_guard_group,
+        )
 
         self.prepare_weapon(0)
 
-
-    def prepare_weapon(
-                        self,
-                        angle
-                        ):
+    def prepare_weapon(self, angle):
         self.pos_weapons = []
-        for value in ENEMIES[1]['angle'][angle]['weapons']:
+        for value in ENEMIES[1]["angle"][angle]["weapons"]:
             self.pos_weapons.append(value)
-
 
     @property
     def pos_weapons_rotation(self):
         result = []
         for value in self.pos_weapons:
-            newX, newY = self.vector_rotation(
-                                                value,
-                                                -self.angle / 180 * math.pi
-                                                )
-            result.append([
-                            self.rect.centerx + newX,
-                            self.rect.centery + newY
-                            ])
+            newX, newY = self.vector_rotation(value, -self.angle / 180 * math.pi)
+            result.append([self.rect.centerx + newX, self.rect.centery + newY])
         return result
 
-
-    def vector_rotation(
-                        self,
-                        vector,
-                        angle
-                        ):
+    def vector_rotation(self, vector, angle):
         vector = Vector2(vector)
         return vector.rotate_rad(angle)
-
 
     def rotation(self):
         rotateX = self.player.rect.centerx - self.rect.centerx
@@ -109,9 +94,9 @@ class Enemies(Sprite):
         else:
             self.angle = angle_vector + 360
 
-        for value in ENEMIES[1]['angle']:
+        for value in ENEMIES[1]["angle"]:
             if self.angle <= value:
-                self.image = ENEMIES[1]['angle'][value]['sprite']
+                self.image = ENEMIES[1]["angle"][value]["sprite"]
                 self.prepare_weapon(value)
                 break
 
@@ -119,12 +104,10 @@ class Enemies(Sprite):
         self.image_rotation = rotozoom(self.image, self.angle, 1)
         self.rect = self.image_rotation.get_rect(center=self.rect.center)
 
-
     def random_value(self):
         self.speed = randint(0, 10)
         self.move_count = randint(0, 600)
         self.direction_list = [0, 1, -1]
-
 
     def check_move_count(self):
         if self.move_count <= 0:
@@ -132,63 +115,68 @@ class Enemies(Sprite):
         else:
             self.move_count -= 1
 
-
     def change_direction(self):
         self.moveX = choice(self.direction_list)
         self.moveY = choice(self.direction_list)
 
-
     def shot(self):
-        if Vector2(self.rect.center).distance_to(self.player.rect.center) <= self.shot_distance:
+        if (
+            Vector2(self.rect.center).distance_to(self.player.rect.center)
+            <= self.shot_distance
+        ):
 
             if self.player.first_shot and randint(0, 100) == 50:
                 for value in self.pos_weapons_rotation:
-                    self.group_list[0].add(shot :=
-                                Shots(
-                                    pos=(value),
-                                    screen=screen,
-                                    group=self.group_list[0],
-                                    angle=self.angle,
-                                    speed=10,
-                                    kill_shot_distance=2000,
-                                    shoter=self,
-                                    color=None,
-                                    image='images/Shots/shot1.png',
-                                    scale_value=.08,
-                                    )
-                                )
-                    self.group_list[2].add(shot) # add in enemies shot group
-
+                    self.sprite_groups.camera_group.add(
+                        shot := Shots(
+                            pos=(value),
+                            screen=screen,
+                            angle=self.angle,
+                            speed=10,
+                            kill_shot_distance=2000,
+                            shoter=self,
+                            color=None,
+                            image="images/Shots/shot1.png",
+                            scale_value=0.08,
+                        )
+                    )
+                    self.sprite_groups.enemies_shot_group.add(
+                        shot
+                    )  # add in enemies shot group
 
     def check_position(self):
-        if self.rect.left <= self.group_list[0].background_rect.left:
-            self.rect.left = self.group_list[0].background_rect.left
+        if self.rect.left <= self.sprite_groups.camera_group.background_rect.left:
+            self.rect.left = self.sprite_groups.camera_group.background_rect.left
             self.change_direction()
 
-        if self.rect.right >= self.group_list[0].background_rect.right:
-            self.rect.right = self.group_list[0].background_rect.right
+        if self.rect.right >= self.sprite_groups.camera_group.background_rect.right:
+            self.rect.right = self.sprite_groups.camera_group.background_rect.right
             self.change_direction()
 
-        if self.rect.top <= self.group_list[0].background_rect.top:
-            self.rect.top = self.group_list[0].background_rect.top
+        if self.rect.top <= self.sprite_groups.camera_group.background_rect.top:
+            self.rect.top = self.sprite_groups.camera_group.background_rect.top
             self.change_direction()
 
-        if self.rect.bottom >= self.group_list[0].background_rect.bottom:
-            self.rect.bottom = self.group_list[0].background_rect.bottom
+        if self.rect.bottom >= self.sprite_groups.camera_group.background_rect.bottom:
+            self.rect.bottom = self.sprite_groups.camera_group.background_rect.bottom
             self.change_direction()
 
         if not self.is_min_distance:
-            if Vector2(self.rect.center).distance_to(self.player.rect.center) < self.min_distance:
+            if (
+                Vector2(self.rect.center).distance_to(self.player.rect.center)
+                < self.min_distance
+            ):
                 self.is_min_distance = True
                 self.change_direction()
 
-        if Vector2(self.rect.center).distance_to(self.player.rect.center) > self.min_distance:
-                self.is_min_distance = False
-
+        if (
+            Vector2(self.rect.center).distance_to(self.player.rect.center)
+            > self.min_distance
+        ):
+            self.is_min_distance = False
 
     def move(self):
         self.rect.move_ip(self.moveX * self.speed, self.moveY * self.speed)
-
 
     def update(self):
         self.check_position()
@@ -201,8 +189,3 @@ class Enemies(Sprite):
         for value in self.pos_weapons_rotation:
             value[0] += self.direction.x
             value[1] += self.direction.y
-
-
-
-
-

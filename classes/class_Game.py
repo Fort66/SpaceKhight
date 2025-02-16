@@ -1,6 +1,6 @@
 import pygame as pg
+
 pg.mixer.pre_init(44100, -16, 2, 2048)
-from pygame.sprite import Group, GroupSingle
 
 from icecream import ic
 
@@ -23,59 +23,19 @@ class Game:
         self.clock = pg.time.Clock()
         self.fps = 100
         self.screen = screen
-        self.sprite_groups = SpriteGroups()
-        # self.win_width = screen.window.get_width()
-        # self.win_height = screen.window.get_height()
         self.check_events = CheckEvents(self)
+        self.sprite_groups = SpriteGroups()
         self.sprite_groups.camera_group = CameraGroup(game=self)
-        # self.create_groups()
-        self.mini_map = MiniMap(
-                                group_list=[
-                                            self.sprite_groups.camera_group,
-                                            self.sprite_groups.player_group,
-                                            self.sprite_groups.enemies_group,
-                                            self.sprite_groups.player_shot_group,
-                                            self.sprite_groups.enemy_shot_group,
-                                            ]
-                                )
+
+        self.mini_map = MiniMap()
         self.dt = 0
         self.setup()
 
-
     def setup(self):
-        self.player = Player(
-                            pos=screen.rect.center,
-                            group_list=[
-                                        self.sprite_groups.camera_group,
-                                        self.sprite_groups.player_group,
-                                        self.sprite_groups.player_shot_group,
-                                        self.sprite_groups.player_guard_group
-                                        ]
-                            )
+        self.player = Player(pos=screen.rect.center)
 
         for _ in range(10):
-            self.sprite_groups.camera_group.add(
-                                Enemies(
-                                        group_list=[
-                                                    self.sprite_groups.camera_group,
-                                                    self.sprite_groups.enemies_group,
-                                                    self.sprite_groups.enemy_shot_group,
-                                                    self.sprite_groups.enemies_guard_group
-                                                    ],
-                                        player=self.player,
-                                        )
-                                )
-
-
-    def create_groups(self):
-        self.camera_group = CameraGroup(self)
-        self.player_group = GroupSingle()
-        self.enemies_group = Group()
-        self.enemy_shot_group = Group()
-        self.player_shot_group = Group()
-        self.player_guard = Group()
-        self.enemies_guard = Group()
-
+            self.sprite_groups.camera_group.add(Enemies(player=self.player))
 
     def run_game(self):
         while self.run:
@@ -95,7 +55,7 @@ class Game:
             #     ic('emeny shot')
             # if pg.sprite.groupcollide(self.enemies_group, self.player_shot_group, False, False):
             #     ic('player shot')
-            self.screen.update_caption(f'{str(round(self.clock.get_fps(), 2))}')
+            self.screen.update_caption(f"{str(round(self.clock.get_fps(), 2))}")
             pg.display.update()
             self.clock.tick(self.fps)
             # self.dt = self.clock.tick(self.fps)/1000.0
