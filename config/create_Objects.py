@@ -1,4 +1,5 @@
 from UI.Screens.class_ScreenGame import ScreenGame
+from classes.class_SpriteGroups import SpriteGroups
 
 
 screen = ScreenGame(
@@ -10,3 +11,5 @@ screen = ScreenGame(
                     is_full_screen = False
                     )
 
+
+sprite_groups = SpriteGroups()

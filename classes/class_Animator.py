@@ -1,4 +1,4 @@
-import pygame as pg
+from pygame.sprite import Sprite
 from pygame.image import load
 from pygame.transform import scale, rotozoom, rotate, scale_by
 
@@ -10,13 +10,14 @@ import numpy as np
 from icecream import ic
 
 
-class Animator:
+class Animator(Sprite):
     def __init__(
                 self,
                 dir_path=None,
                 speed_frame=.05,
                 obj_rect=None,
                 ):
+        super().__init__()
 
         self.dir_path = dir_path
         self.speed_frame = speed_frame

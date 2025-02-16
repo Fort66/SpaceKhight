@@ -9,6 +9,7 @@ from config.create_Objects import screen
 from classes.class_CheckEvents import CheckEvents
 from classes.class_CameraGroup import CameraGroup
 from classes.class_BackgroundScreen import BackgroundScreen
+from classes.class_SpriteGroups import SpriteGroups
 
 from units.class_Player import Player
 from units.class_Enemies import Enemies
@@ -22,17 +23,19 @@ class Game:
         self.clock = pg.time.Clock()
         self.fps = 100
         self.screen = screen
+        self.sprite_groups = SpriteGroups()
         # self.win_width = screen.window.get_width()
         # self.win_height = screen.window.get_height()
         self.check_events = CheckEvents(self)
-        self.create_groups()
+        self.sprite_groups.camera_group = CameraGroup(game=self)
+        # self.create_groups()
         self.mini_map = MiniMap(
                                 group_list=[
-                                            self.camera_group,
-                                            self.player_group,
-                                            self.enemies_group,
-                                            self.player_shot_group,
-                                            self.enemy_shot_group,
+                                            self.sprite_groups.camera_group,
+                                            self.sprite_groups.player_group,
+                                            self.sprite_groups.enemies_group,
+                                            self.sprite_groups.player_shot_group,
+                                            self.sprite_groups.enemy_shot_group,
                                             ]
                                 )
         self.dt = 0
@@ -43,19 +46,21 @@ class Game:
         self.player = Player(
                             pos=screen.rect.center,
                             group_list=[
-                                        self.camera_group,
-                                        self.player_group,
-                                        self.player_shot_group,
+                                        self.sprite_groups.camera_group,
+                                        self.sprite_groups.player_group,
+                                        self.sprite_groups.player_shot_group,
+                                        self.sprite_groups.player_guard_group
                                         ]
                             )
 
         for _ in range(10):
-            self.camera_group.add(
+            self.sprite_groups.camera_group.add(
                                 Enemies(
                                         group_list=[
-                                                    self.camera_group,
-                                                    self.enemies_group,
-                                                    self.enemy_shot_group
+                                                    self.sprite_groups.camera_group,
+                                                    self.sprite_groups.enemies_group,
+                                                    self.sprite_groups.enemy_shot_group,
+                                                    self.sprite_groups.enemies_guard_group
                                                     ],
                                         player=self.player,
                                         )
@@ -68,6 +73,8 @@ class Game:
         self.enemies_group = Group()
         self.enemy_shot_group = Group()
         self.player_shot_group = Group()
+        self.player_guard = Group()
+        self.enemies_guard = Group()
 
 
     def run_game(self):
@@ -76,9 +83,9 @@ class Game:
 
             self.check_events.check_events()
 
-            self.camera_group.update()
+            self.sprite_groups.camera_group.update()
 
-            self.camera_group.custom_draw(self.player)
+            self.sprite_groups.camera_group.custom_draw(self.player)
 
             # self.mini_map.update()
 

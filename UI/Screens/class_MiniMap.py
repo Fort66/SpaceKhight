@@ -7,7 +7,7 @@ from icecream import ic
 class MiniMap:
     def __init__(
                 self,
-                group_list=[],
+                group_list:list=None,
                 ):
 
         self.group_list = group_list
@@ -60,7 +60,7 @@ class MiniMap:
         for shot in self.group_list[3]:
             pg.draw.circle(
                             self.map_surface,
-                            'yellow',
+                            'Lime',
                             (
                             int(shot.rect.centerx * self.ratioX),
                             int(shot.rect.centery * self.ratioY)
@@ -73,7 +73,7 @@ class MiniMap:
         for shot in self.group_list[4]:
             pg.draw.circle(
                             self.map_surface,
-                            'red',
+                            'Fuchsia',
                             (
                             int(shot.rect.centerx * self.ratioX),
                             int(shot.rect.centery * self.ratioY)

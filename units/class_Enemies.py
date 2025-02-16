@@ -18,7 +18,7 @@ from units.class_Guardian import Guardian
 class Enemies(Sprite):
     def __init__(
                 self,
-                group_list=[],
+                group_list=None,
                 player=None,
                 ):
         super().__init__(group_list[0])
@@ -60,6 +60,7 @@ class Enemies(Sprite):
                                 dir_path='images/Guards/guard2',
                                 speed_frame=.09,
                                 obj_rect=self.rect,
+                                group=self.group_list[3]
                                 )
 
         self.prepare_weapon(0)

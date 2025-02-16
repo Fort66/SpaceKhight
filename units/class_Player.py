@@ -20,7 +20,7 @@ class Player(Sprite):
     def __init__(
                 self,
                 pos=(0, 0),
-                group_list=[],
+                group_list=None,
                 ):
         super().__init__(group_list[0])
 
@@ -46,6 +46,7 @@ class Player(Sprite):
                                 dir_path='images/Guards/guard1',
                                 speed_frame=.09,
                                 obj_rect=self.rect,
+                                group=self.group_list[3]
                                 )
 
         self.prepare_weapon(0)
