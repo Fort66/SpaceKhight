@@ -3,7 +3,7 @@ from sys import exit
 
 from loguru import logger
 
-# import cProfiless
+# import cProfile
 
 
 # from memory_profiler import profile
@@ -16,7 +16,7 @@ from loguru import logger
 #         profile_filename = func.__name__ + '.prof'
 #         profiler = cProfile.Profile()
 #         result = profiler.runcall(func, *args, **kwargs)
-#         profiler.dump_stats(profile_filename)
+#         profiler.dump_stats(profile_filename)ds
 #         return result
 #     return wrapper
 

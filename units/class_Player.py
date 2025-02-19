@@ -1,4 +1,4 @@
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, spritecollideany, spritecollide
 from pygame.transform import scale, flip, rotozoom, scale_by
 from pygame.image import load
 from pygame.locals import MOUSEWHEEL, MOUSEBUTTONDOWN, K_a, K_d, K_w, K_s
@@ -10,12 +10,15 @@ from icecream import ic
 import math
 
 from config.sources.heroes.source import HEROES
-from config.create_Objects import screen
+from config.create_Objects import screen, checks, weapons
 
 from units.class_Shots import Shots
 from units.class_Guardian import Guardian
 
 from classes.class_SpriteGroups import SpriteGroups
+
+from functions.function_player_collision import guard_collision
+from functions.function_weapons import pos_weapons_rotation, vector_rotation
 
 
 class Player(Sprite):
@@ -28,12 +31,14 @@ class Player(Sprite):
         super().__init__(self.sprite_groups.camera_group)
         self.sprite_groups.camera_group.add(self)
         self.sprite_groups.player_group.add(self)
+        # self.sprite_groups.all_sprites_group.add(self)
 
         self.pos = pos
         self.direction = Vector2(pos)
         self.angle = 0
         self.rotation_speed = 10
         self.speed = 7
+
 
         self.first_shot = False
 
@@ -48,27 +53,20 @@ class Player(Sprite):
             dir_path="images/Guards/guard1",
             speed_frame=0.09,
             obj_rect=self.rect,
-            group=self.sprite_groups.player_guard_group,
+            scale_value=(1, 1),
+            loops=-1,
+            guard_level=10,
+            pos=self.rect.center
+            # cover=True
         )
 
         self.prepare_weapon(0)
 
     def prepare_weapon(self, angle):
-        self.pos_weapons = []
-        for value in HEROES[1]["angle"][angle]["weapons"]:
-            self.pos_weapons.append(value)
+        weapons.load_weapons(self, HEROES[1]["angle"][angle]["weapons"], angle)
 
-    @property
     def pos_weapons_rotation(self):
-        result = []
-        for value in self.pos_weapons:
-            newX, newY = self.vector_rotation(value, -self.angle / 180 * math.pi)
-            result.append([self.rect.centerx + newX, self.rect.centery + newY])
-        return result
-
-    def vector_rotation(self, vector, angle):
-        vector = Vector2(vector)
-        return vector.rotate_rad(angle)
+        return weapons.pos_rotation(self, self.angle)
 
     def rotation(self):
         for value in HEROES[1]["angle"]:
@@ -98,10 +96,11 @@ class Player(Sprite):
                 self.shot()
 
     def shot(self):
-        for value in self.pos_weapons_rotation:
+        value = self.pos_weapons_rotation()
+        for pos in value:
             self.sprite_groups.camera_group.add(
                 shot := Shots(
-                    pos=(value),
+                    pos=(pos),
                     screen=screen,
                     angle=self.angle,
                     speed=10,
@@ -111,41 +110,39 @@ class Player(Sprite):
                     scale_value=0.15,
                 )
             )
-            self.sprite_groups.player_shot_group.add(shot)  # player shot_group
+            self.sprite_groups.player_shot_group.add(shot)
 
     def check_position(self):
-        if self.rect.left <= self.sprite_groups.camera_group.background_rect.left:
-            self.rect.left = self.sprite_groups.camera_group.background_rect.left
-
-        if self.rect.right >= self.sprite_groups.camera_group.background_rect.right:
-            self.rect.right = self.sprite_groups.camera_group.background_rect.right
-
-        if self.rect.top <= self.sprite_groups.camera_group.background_rect.top:
-            self.rect.top = self.sprite_groups.camera_group.background_rect.top
-
-        if self.rect.bottom >= self.sprite_groups.camera_group.background_rect.bottom:
-            self.rect.bottom = self.sprite_groups.camera_group.background_rect.bottom
+        checks.position(self, self.sprite_groups.camera_group.background_rect)
 
     def move(self):
         keys = get_pressed()
         if keys[K_a]:
             self.rect.move_ip(-self.speed, 0)
-
         if keys[K_w]:
             self.rect.move_ip(0, -self.speed)
-
         if keys[K_s]:
             self.rect.move_ip(0, self.speed)
-
         if keys[K_d]:
             self.rect.move_ip(self.speed, 0)
 
     def update(self):
         self.check_position()
         self.move()
-        # self.shield.animate(self.rect)
-        self.shield.animate(self.rect)
+        if hasattr(self, "shield"):
+            self.shield.animate(self.rect)
+            guard_collision(self)
 
-        for value in self.pos_weapons_rotation:
-            value[0] += self.direction.x
-            value[1] += self.direction.y
+        # self.check_collision(self)
+        
+        if hasattr(self, 'explosion'):
+            self.explosion.animate(self.rect)
+
+
+
+        value = self.pos_weapons_rotation()
+        for pos in value:
+            pos[0] += self.direction.x
+            pos[1] += self.direction.y
+        # value[0] += self.direction.x
+        # value[1] += self.direction.y

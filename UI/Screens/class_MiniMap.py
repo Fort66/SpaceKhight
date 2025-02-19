@@ -8,28 +8,31 @@ from icecream import ic
 
 
 class MiniMap:
-    def __init__(self):
-
+    def __init__(self, scale_value=.25, color_map=(0, 100, 0, 255)):
         self.sprite_groups = SpriteGroups()
         self.old_screen_size = screen.window.get_size()
+        self.scale_value = scale_value
+        self.color_map = color_map
         self.set_map()
-
-    def change_size_map(self):
-        if screen.window.get_size() != self.old_screen_size:
-            self.set_map()
 
     def set_map(self):
         self.map_surface = pg.Surface(screen.window.get_size(), pg.SRCALPHA)
-        self.map_surface = scale_by(self.map_surface, 0.25)
+        self.map_surface = scale_by(self.map_surface, self.scale_value)
         self.map_size = self.map_surface.get_size()
-        self.map_surface.fill((0, 100, 0, 50))
+        self.map_surface.fill(self.color_map)
         self.ratioX = (
             self.map_size[0] / self.sprite_groups.camera_group.background_rect[2]
         )
         self.ratioY = (
             self.map_size[1] / self.sprite_groups.camera_group.background_rect[3]
         )
+
         self.map_rect = self.map_surface.get_rect(bottomright=screen.rect.bottomright)
+
+    def change_size_map(self):
+        if screen.window.get_size() != self.old_screen_size:
+            self.set_map()
+            self.old_screen_size = screen.window.get_size()
 
     def draw_player(self):
         for player in self.sprite_groups.player_group:
@@ -59,7 +62,7 @@ class MiniMap:
         for shot in self.sprite_groups.player_shot_group:
             pg.draw.circle(
                 self.map_surface,
-                "Lime",
+                "lime",
                 (
                     int(shot.rect.centerx * self.ratioX),
                     int(shot.rect.centery * self.ratioY),
@@ -81,7 +84,7 @@ class MiniMap:
 
     def update(self):
         self.change_size_map()
-        self.map_surface.fill((0, 100, 0, 50))
+        self.map_surface.fill(self.color_map)
         self.draw_player()
         self.draw_enemies()
         self.draw_player_shot()

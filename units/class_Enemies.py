@@ -9,12 +9,12 @@ import math
 from random import randint, choice, uniform
 
 from config.sources.enemies.source import ENEMIES
-from config.create_Objects import screen
+from config.create_Objects import screen, checks, weapons
 
 from units.class_Shots import Shots
 from units.class_Guardian import Guardian
 from classes.class_SpriteGroups import SpriteGroups
-
+from functions.function_enemies_collision import guard_collision
 
 class Enemies(Sprite):
     def __init__(
@@ -24,7 +24,7 @@ class Enemies(Sprite):
 
         self.sprite_groups = SpriteGroups()
         super().__init__(self.sprite_groups.camera_group)
-        self.sprite_groups.enemies_group.add(self)  # add in enemies group
+        self.sprite_groups.enemies_group.add(self)
 
         self.player = player
         self.angle = 0
@@ -62,23 +62,20 @@ class Enemies(Sprite):
             dir_path="images/Guards/guard2",
             speed_frame=0.09,
             obj_rect=self.rect,
-            group=self.sprite_groups.enemies_guard_group,
+            guard_level=1,
+            scale_value=(1, 1),
+            loops=-1,
+            pos=self.rect.center
+            # cover=True
         )
 
         self.prepare_weapon(0)
 
     def prepare_weapon(self, angle):
-        self.pos_weapons = []
-        for value in ENEMIES[1]["angle"][angle]["weapons"]:
-            self.pos_weapons.append(value)
+        weapons.load_weapons(self, ENEMIES[1]["angle"][angle]["weapons"], angle)
 
-    @property
     def pos_weapons_rotation(self):
-        result = []
-        for value in self.pos_weapons:
-            newX, newY = self.vector_rotation(value, -self.angle / 180 * math.pi)
-            result.append([self.rect.centerx + newX, self.rect.centery + newY])
-        return result
+        return weapons.pos_rotation(self, self.angle)
 
     def vector_rotation(self, vector, angle):
         vector = Vector2(vector)
@@ -126,10 +123,11 @@ class Enemies(Sprite):
         ):
 
             if self.player.first_shot and randint(0, 100) == 50:
-                for value in self.pos_weapons_rotation:
+                value = self.pos_weapons_rotation()
+                for pos in value:
                     self.sprite_groups.camera_group.add(
                         shot := Shots(
-                            pos=(value),
+                            pos=(pos),
                             screen=screen,
                             angle=self.angle,
                             speed=10,
@@ -140,25 +138,14 @@ class Enemies(Sprite):
                             scale_value=0.08,
                         )
                     )
-                    self.sprite_groups.enemies_shot_group.add(
-                        shot
-                    )  # add in enemies shot group
+                    self.sprite_groups.enemies_shot_group.add(shot)
+                    # self.sprite_groups.all_sprites_group.add(
+                        # shot
+                    # )
 
     def check_position(self):
-        if self.rect.left <= self.sprite_groups.camera_group.background_rect.left:
-            self.rect.left = self.sprite_groups.camera_group.background_rect.left
-            self.change_direction()
-
-        if self.rect.right >= self.sprite_groups.camera_group.background_rect.right:
-            self.rect.right = self.sprite_groups.camera_group.background_rect.right
-            self.change_direction()
-
-        if self.rect.top <= self.sprite_groups.camera_group.background_rect.top:
-            self.rect.top = self.sprite_groups.camera_group.background_rect.top
-            self.change_direction()
-
-        if self.rect.bottom >= self.sprite_groups.camera_group.background_rect.bottom:
-            self.rect.bottom = self.sprite_groups.camera_group.background_rect.bottom
+        not_position = checks.position(self, self.sprite_groups.camera_group.background_rect)
+        if not_position:
             self.change_direction()
 
         if not self.is_min_distance:
@@ -166,6 +153,8 @@ class Enemies(Sprite):
                 Vector2(self.rect.center).distance_to(self.player.rect.center)
                 < self.min_distance
             ):
+                # self.moveX *= -1
+                # self.moveY *= -1
                 self.is_min_distance = True
                 self.change_direction()
 
@@ -184,8 +173,11 @@ class Enemies(Sprite):
         self.check_move_count()
         self.move()
         self.shot()
-        self.shield.animate(self.rect)
+        if hasattr(self, "shield"):
+            self.shield.animate(self.rect)
+            guard_collision(self)
 
-        for value in self.pos_weapons_rotation:
-            value[0] += self.direction.x
-            value[1] += self.direction.y
+        value = self.pos_weapons_rotation()
+        for pos in value:
+            pos[0] += self.direction.x
+            pos[1] += self.direction.y

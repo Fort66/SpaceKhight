@@ -1,5 +1,5 @@
 import pygame as pg
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, spritecollideany, groupcollide
 from pygame.math import Vector2
 from pygame.transform import rotozoom, scale_by
 from pygame.image import load
@@ -8,21 +8,23 @@ from icecream import ic
 
 from classes.class_SpriteGroups import SpriteGroups
 
+from functions.function_shots_collision import shots_collision
+
 class Shots(Sprite):
     def __init__(
-                self,
-                pos=(0, 0),
-                screen=None,
-                size=(10, 2),
-                color='white',
-                speed=0,
-                angle=0,
-                shoter=None,
-                kill_shot_distance=None,
-                image=None,
-                scale_value=None,
-                damage=None
-                ):
+        self,
+        pos=(0, 0),
+        screen=None,
+        size=(10, 2),
+        color="white",
+        speed=0,
+        angle=0,
+        shoter=None,
+        kill_shot_distance=None,
+        image=None,
+        scale_value=None,
+        damage=None,
+    ):
 
         self.sprite_groups = SpriteGroups()
         super().__init__(self.sprite_groups.camera_group)
@@ -47,11 +49,12 @@ class Shots(Sprite):
         self.direction = Vector2(1, 0).rotate(-self.angle)
         self.speed = speed
 
-
     def check_position(self):
-        if Vector2(self.rect.center).distance_to(self.old_shot_coordinate) > self.kill_shot_distance:
+        if (
+            Vector2(self.rect.center).distance_to(self.old_shot_coordinate)
+            > self.kill_shot_distance
+        ):
             self.kill()
-
 
     def move(self):
         self.pos += self.direction * self.speed
@@ -61,3 +64,5 @@ class Shots(Sprite):
     def update(self):
         self.check_position()
         self.move()
+        shots_collision(self)
+

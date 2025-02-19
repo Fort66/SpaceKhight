@@ -27,7 +27,7 @@ class Game:
         self.sprite_groups = SpriteGroups()
         self.sprite_groups.camera_group = CameraGroup(game=self)
 
-        self.mini_map = MiniMap()
+        self.mini_map = MiniMap(scale_value=0.2, color_map=(0, 100, 0, 170))
         self.dt = 0
         self.setup()
 
