@@ -1,14 +1,20 @@
 import pygame as pg
-from pygame.sprite import Sprite, spritecollideany, groupcollide
+from pygame.sprite import (
+    Sprite,
+    spritecollideany,
+    groupcollide
+    )
 from pygame.math import Vector2
-from pygame.transform import rotozoom, scale_by
+from pygame.transform import (
+    rotozoom,
+    scale_by)
 from pygame.image import load
 
 from icecream import ic
 
 from classes.class_SpriteGroups import SpriteGroups
 
-from functions.function_shots_collision import shots_collision
+from functions.function_shots_collision import player_guard_collision
 
 class Shots(Sprite):
     def __init__(
@@ -64,5 +70,6 @@ class Shots(Sprite):
     def update(self):
         self.check_position()
         self.move()
-        shots_collision(self)
+
+        player_guard_collision()
 

@@ -1,6 +1,14 @@
 import pygame as pg
-from pygame.display import set_mode, set_caption, set_icon, get_desktop_sizes
-from pygame.locals import RESIZABLE, FULLSCREEN
+from pygame.display import (
+    set_mode,
+    set_caption,
+    set_icon,
+    get_desktop_sizes
+    )
+from pygame.locals import (
+    RESIZABLE,
+    FULLSCREEN
+    )
 from pygame.image import load
 
 from dataclasses import dataclass

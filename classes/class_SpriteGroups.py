@@ -1,4 +1,7 @@
-from pygame.sprite import Group, GroupSingle
+from pygame.sprite import (
+    Group,
+    GroupSingle
+    )
 
 from icecream import ic
 

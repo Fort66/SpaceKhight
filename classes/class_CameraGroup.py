@@ -4,11 +4,7 @@ from pygame.image import load
 from pygame.sprite import Group
 from pygame.math import Vector2
 
-# from Game.LevelsGame import LG
-# from Game.source import backgroundSection
-
-
-back = "images/tmp/back6.jpg"
+back = "images/backgrounds/back6.jpg"
 
 
 class CameraGroup(Group):
@@ -18,11 +14,6 @@ class CameraGroup(Group):
         self.game = game
         self.display_surface = get_surface()
         self.offset = Vector2()
-        self.__post_init__()
-        # self.keyboard_speed = None
-        # self.mouse_speed = None
-
-    def __post_init__(self):
         self.half = (
             self.display_surface.get_size()[0] // 2,
             self.display_surface.get_size()[1] // 2,
@@ -41,20 +32,12 @@ class CameraGroup(Group):
 
     def custom_draw(self, player):
         self.camera_center(player)
+
         self.background_offset = self.background_rect.topleft - self.offset
         self.display_surface.blit(self.background_surface, self.background_offset)
 
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.center):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image_rotation, offset_position)
 
-            if hasattr(sprite, "shield"):
-                self.display_surface.blit(
-                    sprite.shield.frames[sprite.shield.frame][0], offset_position
-                )
-
-            if hasattr(sprite, 'explosion'):
-                self.display_surface.blit(
-                sprite.explosion.frames[sprite.explosion.frame][0], offset_position)
-            
         self.game.mini_map.update()

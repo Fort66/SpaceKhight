@@ -1,5 +1,5 @@
 from pygame.math import Vector2
-import math
+from math import pi
 
 
 class Weapons:
@@ -10,11 +10,19 @@ class Weapons:
 
     def pos_rotation(self, obj, angle):
         result = []
-        for value in obj.pos_weapons:
-            newX, newY = self.vector_rotation(value, -angle / 180 * math.pi)
+        for weapon in obj.pos_weapons:
+            newX, newY = self.vector_rotation(weapon, -angle / 180 * pi)
             result.append([obj.rect.centerx + newX, obj.rect.centery + newY])
         return result
 
     def vector_rotation(self, vector, angle):
         vector = Vector2(vector)
         return vector.rotate_rad(angle)
+
+    def update_weapons(self, obj, angle):
+        value = self.pos_rotation(obj, angle)
+        for pos in value:
+            pos[0] += obj.direction.x
+            pos[1] += obj.direction.y
+
+            return pos[0], pos[1]
