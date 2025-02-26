@@ -4,15 +4,14 @@ pg.mixer.pre_init(44100, -16, 2, 2048)
 
 from icecream import ic
 
-from config.create_Objects import screen
-
+from config.create_Objects import screen, levels_game
 from classes.class_CheckEvents import CheckEvents
 from classes.class_CameraGroup import CameraGroup
-from classes.class_BackgroundScreen import BackgroundScreen
-from classes.class_SpriteGroups import SpriteGroups
-
 from units.class_Player import Player
-from units.class_Enemies import Enemies
+from units.class_Enemies import Enemy
+
+from classes.class_SpriteGroups import SpriteGroups
+from logic.class_LevelsGame import LevelsGame
 
 from UI.Screens.class_MiniMap import MiniMap
 
@@ -23,19 +22,21 @@ class Game:
         self.clock = pg.time.Clock()
         self.fps = 100
         self.screen = screen
+        self.win_width = screen.window.get_width()
+        self.win_height = screen.window.get_height()
         self.check_events = CheckEvents(self)
         self.sprite_groups = SpriteGroups()
-        self.sprite_groups.camera_group = CameraGroup(game=self)
+        self.sprite_groups.camera_group = CameraGroup(self)
+        self.mini_map = MiniMap(scale_value=0.15, color_map=(0, 100, 0, 170))
+        self.load_player()
+        self.load_enemies()
 
-        self.mini_map = MiniMap(scale_value=0.2, color_map=(0, 100, 0, 170))
-        self.dt = 0
-        self.setup()
-
-    def setup(self):
+    def load_player(self):
         self.player = Player(pos=screen.rect.center)
 
-        for _ in range(5):
-            self.sprite_groups.camera_group.add(Enemies(player=self.player))
+    def load_enemies(self):
+        for _ in range(levels_game.enemies_amount):
+            self.sprite_groups.camera_group.add(Enemy(player=self.player))
 
     def run_game(self):
         while self.run:
@@ -43,20 +44,25 @@ class Game:
 
             self.check_events.check_events()
 
-            self.sprite_groups.camera_group.update()
+            if len(self.sprite_groups.enemies_group) == 0:
+                levels_game.attack_level += 1
+                levels_game.current_level += 1
+                self.sprite_groups.camera_group.set_background()
+                levels_game.update_levels()
+                self.player.first_shot = False
+                self.load_enemies()
 
+            if len(self.sprite_groups.player_group) == 0:
+                levels_game.attack_level = 0
+                levels_game.current_level = 1
+                levels_game.update_levels()
+                self.sprite_groups.camera_group.set_background()
+                self.load_player()
+                self.load_enemies()
+
+            self.sprite_groups.camera_group.update()
             self.sprite_groups.camera_group.custom_draw(self.player)
 
-            # self.mini_map.update()
-
-            # if pg.sprite.groupcollide(self.player_group, self.enemies_group, False, False):
-            #     ic('enemy')
-            # if pg.sprite.groupcollide(self.player_group, self.enemy_shot_group, False, False):
-            #     ic('emeny shot')
-            # if pg.sprite.groupcollide(self.enemies_group, self.player_shot_group, False, False):
-            #     ic('player shot')
             self.screen.update_caption(f"{str(round(self.clock.get_fps(), 2))}")
             pg.display.update()
             self.clock.tick(self.fps)
-            # self.dt = self.clock.tick(self.fps)/1000.0
-            # self.dt = self.clock.tick(self.fps) / 1000

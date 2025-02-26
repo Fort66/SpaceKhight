@@ -9,9 +9,10 @@ class Weapons:
             obj.pos_weapons.append(value)
 
     def pos_rotation(self, obj, angle):
+        self.angle = angle
         result = []
-        for weapon in obj.pos_weapons:
-            newX, newY = self.vector_rotation(weapon, -angle / 180 * pi)
+        for value in obj.pos_weapons:
+            newX, newY = self.vector_rotation(value, -angle / 180 * pi)
             result.append([obj.rect.centerx + newX, obj.rect.centery + newY])
         return result
 

@@ -6,7 +6,7 @@ from classes.class_SpriteGroups import SpriteGroups
 
 
 class MiniMap:
-    def __init__(self, scale_value=0.15, color_map=(0, 100, 0, 255)):
+    def __init__(self, scale_value=.25, color_map=(0, 100, 0, 255)):
         self.sprite_groups = SpriteGroups()
         self.old_screen_size = screen.window.get_size()
         self.scale_value = scale_value
@@ -28,7 +28,7 @@ class MiniMap:
         self.map_rect = self.map_surface.get_rect(topleft=screen.rect.topleft)
 
     def change_size_map(self):
-        if self.old_screen_size != screen.window.get_size():
+        if screen.window.get_size() != self.old_screen_size:
             self.set_map()
             self.old_screen_size = screen.window.get_size()
 
@@ -72,7 +72,7 @@ class MiniMap:
         for shot in self.sprite_groups.enemies_shot_group:
             pg.draw.circle(
                 self.map_surface,
-                "fuchsia",
+                "Fuchsia",
                 (
                     int(shot.rect.centerx * self.ratioX),
                     int(shot.rect.centery * self.ratioY),

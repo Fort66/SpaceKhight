@@ -1,9 +1,4 @@
-from pygame.sprite import (
-    Group,
-    GroupSingle
-    )
-
-from icecream import ic
+from pygame.sprite import Group, GroupSingle
 
 
 class SpriteGroups:
@@ -14,12 +9,11 @@ class SpriteGroups:
         "enemies_group": Group(),
         "player_shot_group": Group(),
         "enemies_shot_group": Group(),
-        "player_guard_group": Group(),
+        "player_guard_group": GroupSingle(),
         "enemies_guard_group": Group(),
         "ally_group": Group(),
         "ally_shot_group": Group(),
         "ally_guard_group": Group(),
-        "all_sprites_group": Group(),
     }
 
     def __new__(cls, *args, **kwargs):
