@@ -34,4 +34,5 @@ def player_collision():
                 angle=hits.angle
             )
             # if time() - start_explosion_time > len(explosion.file_list) * explosion.speed_frame:
-            hits.kill()
+            if not explosion:
+                hits.kill()

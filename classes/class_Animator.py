@@ -3,6 +3,7 @@ from pygame.image import load
 from pygame.transform import scale, rotozoom, rotate, scale_by
 
 from PIL import Image
+# from numba import jit
 
 from os import listdir
 from time import time

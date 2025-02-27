@@ -37,6 +37,16 @@ class Game:
     def load_enemies(self):
         for _ in range(levels_game.enemies_amount):
             self.sprite_groups.camera_group.add(Enemy(player=self.player))
+            
+    def clear_player_group(self):
+        self.sprite_groups.player_group.empty()
+        self.sprite_groups.player_shot_group.empty()
+        self.sprite_groups.player_guard_group.empty()
+    
+    def clear_enemies_group(self):
+        self.sprite_groups.enemies_group.empty()
+        self.sprite_groups.enemies_shot_group.empty()
+        self.sprite_groups.enemies_guard_group.empty()
 
     def run_game(self):
         while self.run:
@@ -45,15 +55,22 @@ class Game:
             self.check_events.check_events()
 
             if len(self.sprite_groups.enemies_group) == 0:
-                levels_game.attack_level += 1
+                self.sprite_groups.camera_group.empty()
+                self.clear_enemies_group()
+                self.clear_player_group()
+                levels_game.attack_min += 1
                 levels_game.current_level += 1
                 self.sprite_groups.camera_group.set_background()
                 levels_game.update_levels()
-                self.player.first_shot = False
+                self.load_player()
                 self.load_enemies()
 
             if len(self.sprite_groups.player_group) == 0:
-                levels_game.attack_level = 0
+                self.sprite_groups.camera_group.empty()
+
+                self.clear_player_group()
+                self.clear_enemies_group()
+                levels_game.attack_min = 0
                 levels_game.current_level = 1
                 levels_game.update_levels()
                 self.sprite_groups.camera_group.set_background()

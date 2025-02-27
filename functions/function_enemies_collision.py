@@ -31,4 +31,5 @@ def enemies_collision():
                 obj=hits,
                 angle=hits.angle
             )
-            hits.kill()
+            if not explosion:
+                hits.kill()

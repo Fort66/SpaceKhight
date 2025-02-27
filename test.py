@@ -231,9 +231,21 @@
 #     win.blit(animation.frames[animation.frame][0], animation.rect)
 #     pygame.display.flip()
 
-import pygame as pg
-image = pg.image.load('images/heroes/Spaceship1/ship1.png')
-print(image.get_size())
-rect = pg.Rect(0, 0, 152, 152)
-image = pg.transform.scale_by(image, (rect[2]/ rect[2], rect[3] / rect[3]))
-print(image.get_size())
+# import pygame as pg
+# image = pg.image.load('images/heroes/Spaceship1/ship1.png')
+# print(image.get_size())
+# rect = pg.Rect(0, 0, 152, 152)
+# image = pg.transform.scale_by(image, (rect[2]/ rect[2], rect[3] / rect[3]))
+# print(image.get_size())
+
+
+_dict = {
+    0: 12,
+    22: 17,
+    45: 35,
+    67: 251,
+    90: 23,
+}
+
+value = 25
+print(max(_dict, key=_dict.get > value))
